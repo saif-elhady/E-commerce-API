@@ -69,4 +69,13 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
+router.delete('/:userId', async (req, res) => {
+    try {
+        await user_1.default.findByIdAndDelete(req.params.userId);
+        res.status(201).json({ message: 'user deleted successfully' });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
 exports.default = router;
