@@ -13,7 +13,7 @@ check('Password')
 .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must be at least 8 characters long and contain at least one number and one special character'),
     check('Name', 'Name is required').not().isEmpty()
     
-    , async (req, res) => {
+    ,async (req, res) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             const formattedErrors = errors.array().map(error => ({
