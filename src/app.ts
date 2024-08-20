@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import router from './routes/user';
+import categoryRouter from './routes/category';
 require('dotenv').config();
 
 const app = express();
@@ -19,5 +20,6 @@ mongoose.connect(dbURI)
     .catch((err: Error) => {
         console.log(err);
 })
+app.use('/api', categoryRouter); // Use the category router with a base path of /api/categories
 
 app.use('/', router);

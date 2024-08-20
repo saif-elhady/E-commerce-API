@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const user_1 = __importDefault(require("./routes/user"));
+const category_1 = __importDefault(require("./routes/category"));
 require('dotenv').config();
 const app = (0, express_1.default)();
 app.use(body_parser_1.default.urlencoded({ extended: true }));
@@ -21,4 +22,5 @@ mongoose_1.default.connect(dbURI)
     .catch((err) => {
     console.log(err);
 });
+app.use('/api', category_1.default); // Use the category router with a base path of /api/categories
 app.use('/', user_1.default);
