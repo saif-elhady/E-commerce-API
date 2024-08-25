@@ -1,11 +1,16 @@
 import express from "express";
 import Category from "../models/category";
+import { apiFeatures } from "../utils/apiFeatures";
 
 const categoryRouter = express.Router();
 
-categoryRouter.get('/category', async (req, res) => {
+categoryRouter.get('/', async (req, res) => {
+    const features = new apiFeatures(Category.find(), req.query)
+        .paginate()
+        .sort()
+        .filter()
     try {
-        const allCategories = await Category.find();
+        const allCategories = await features.query;
         res.status(201).json(allCategories);
     }
     catch (error) {
@@ -13,7 +18,7 @@ categoryRouter.get('/category', async (req, res) => {
     }
 })
 
-categoryRouter.post('/category', async (req, res) => {
+categoryRouter.post('/', async (req, res) => {
     const { Name, Description } = req.body;
     if (!Name || !Description) {
         return res.status(400).json({ message: 'Name and Description are required' });
@@ -29,7 +34,7 @@ categoryRouter.post('/category', async (req, res) => {
 }
 });
 
-categoryRouter.patch('/category/:categoryId', async (req, res) => {
+categoryRouter.patch('/:categoryId', async (req, res) => {
 const { Name, Description } = req.body;
 try {
     const updatedCategory = await Category.findByIdAndUpdate(req.params.categoryId, { Name, Description }, { new: true, runValidators: true });
@@ -42,7 +47,7 @@ try {
 }
 });
 
-categoryRouter.delete('/category/:categoryId', async (req, res) => {
+categoryRouter.delete('/:categoryId', async (req, res) => {
 try {
     const deletedCategory = await Category.findByIdAndDelete(req.params.categoryId);
     if (!deletedCategory) {
