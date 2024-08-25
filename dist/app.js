@@ -24,7 +24,7 @@ mongoose_1.default.connect(dbURI)
     .catch((err) => {
     console.log(err);
 });
-app.use('/api/category', category_1.default);
-app.use('/api/product', product_1.default);
-app.use('/api/order', order_1.default);
-app.use('/api', user_1.default);
+app.use('/api/categories', category_1.default);
+app.use('/api/products', product_1.default);
+app.use('/api/orders', order_1.default);
+app.use('/api/users', user_1.default);

@@ -5,9 +5,17 @@ import categoryRouter from './routes/category';
 import productRouter from './routes/product';
 import orderRouter from './routes/order';
 import userRouter from './routes/user';
+import { IUser } from './models/user';
+
 require('dotenv').config();
 
 const app = express();
+
+declare module 'express' {
+    export interface Request {
+        user?: IUser
+    }
+}
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -22,7 +30,7 @@ mongoose.connect(dbURI)
     .catch((err: Error) => {
         console.log(err);
 })
-app.use('/api/category', categoryRouter);
-app.use('/api/product', productRouter);
-app.use('/api/order', orderRouter);
-app.use('/api', userRouter);
+app.use('/api/categories', categoryRouter);
+app.use('/api/products', productRouter);
+app.use('/api/orders', orderRouter);
+app.use('/api/users', userRouter);
