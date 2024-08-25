@@ -1,6 +1,7 @@
 import express, { Router,Request,Response } from 'express';
 import Product from '../models/product';
 import { apiFeatures } from "../utils/apiFeatures";
+import checkAuth from '../middleware/checkAuth';
 import multer from 'multer';
 
 const productRouter = express.Router();
@@ -26,25 +27,7 @@ productRouter.get('/', async (req, res) => {
     }
 })
 
-productRouter.get('/category/:categoryId', async (req, res) => {
-    const features = new apiFeatures(Product.find({ CategoryID: req.params.categoryId }), req.query)
-    .paginate()
-    .sort()
-    .filter()
-    try {
-        const productsByCategory = await features.query;
-        if (!productsByCategory) {
-            return res.status(404).json({ message: 'Products not found' });
-        }
-
-        res.status(200).json(productsByCategory);
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Server error', error });
-    }
-})
-
-productRouter.get('/product/:productId', async (req, res) => {
+productRouter.get('/:productId', async (req, res) => {
     try {
         const productByID = await Product.findById(req.params.productId);
         if (!productByID) {
@@ -59,7 +42,7 @@ productRouter.get('/product/:productId', async (req, res) => {
     
 })
 
-productRouter.post('/create', upload.array('images', 5), async (req, res) => {
+productRouter.post('/create', checkAuth ,upload.array('images', 5), async (req, res) => {
     if (!Array.isArray(req.files))
         return res.status(500);
     try {
@@ -84,7 +67,7 @@ productRouter.post('/create', upload.array('images', 5), async (req, res) => {
     }
 })
 
-productRouter.patch('/product/:productId', async (req, res) => {
+productRouter.patch('/:productId', checkAuth ,async (req, res) => {
     try {
         const productID = req.params.productId;
         const updateData = req.body;
@@ -101,7 +84,7 @@ productRouter.patch('/product/:productId', async (req, res) => {
     }
 })
 
-productRouter.delete('/product/:productId', async (req, res) => {
+productRouter.delete('/:productId', checkAuth ,async (req, res) => {
     try {
         const productID = req.params.productId;
         const deletedProduct = await Product.findByIdAndDelete(productID);

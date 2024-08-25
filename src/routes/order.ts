@@ -1,6 +1,7 @@
 import express from 'express';
 import Order from '../models/order';
 import { apiFeatures } from "../utils/apiFeatures";
+import checkAuth from '../middleware/checkAuth';
 
 const orderRouter = express.Router();
 
@@ -34,7 +35,7 @@ orderRouter.get('/:orderId', async (req, res) => {
     }
 })
 
-orderRouter.post('/create', async(req, res) => {
+orderRouter.post('/create', checkAuth ,async(req, res) => {
     try {
         const newOrder = new Order({
             UserID: req.body.UserID,
@@ -52,7 +53,7 @@ orderRouter.post('/create', async(req, res) => {
     }
 })
 
-orderRouter.patch('/:orderId', async(req, res) => {
+orderRouter.patch('/:orderId', checkAuth, async (req, res) => {
     try {
         const orderId = req.params.orderId;
         const updateData = req.body;
@@ -68,7 +69,7 @@ orderRouter.patch('/:orderId', async(req, res) => {
     }
 })
 
-orderRouter.delete('/:orderId', async (req, res) => {
+orderRouter.delete('/:orderId', checkAuth,async (req, res) => {
     try {
         const orderId = req.params.orderId;
         const deleteOrder = await Order.findByIdAndDelete(orderId);

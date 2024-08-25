@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const product_1 = __importDefault(require("../models/product"));
 const apiFeatures_1 = require("../utils/apiFeatures");
+const checkAuth_1 = __importDefault(require("../middleware/checkAuth"));
 const multer_1 = __importDefault(require("multer"));
 const productRouter = express_1.default.Router();
 const storage = multer_1.default.memoryStorage();
@@ -26,23 +27,7 @@ productRouter.get('/', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-productRouter.get('/category/:categoryId', async (req, res) => {
-    const features = new apiFeatures_1.apiFeatures(product_1.default.find({ CategoryID: req.params.categoryId }), req.query)
-        .paginate()
-        .sort()
-        .filter();
-    try {
-        const productsByCategory = await features.query;
-        if (!productsByCategory) {
-            return res.status(404).json({ message: 'Products not found' });
-        }
-        res.status(200).json(productsByCategory);
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Server error', error });
-    }
-});
-productRouter.get('/product/:productId', async (req, res) => {
+productRouter.get('/:productId', async (req, res) => {
     try {
         const productByID = await product_1.default.findById(req.params.productId);
         if (!productByID) {
@@ -54,7 +39,7 @@ productRouter.get('/product/:productId', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-productRouter.post('/create', upload.array('images', 5), async (req, res) => {
+productRouter.post('/create', checkAuth_1.default, upload.array('images', 5), async (req, res) => {
     if (!Array.isArray(req.files))
         return res.status(500);
     try {
@@ -78,7 +63,7 @@ productRouter.post('/create', upload.array('images', 5), async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-productRouter.patch('/product/:productId', async (req, res) => {
+productRouter.patch('/:productId', checkAuth_1.default, async (req, res) => {
     try {
         const productID = req.params.productId;
         const updateData = req.body;
@@ -92,7 +77,7 @@ productRouter.patch('/product/:productId', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-productRouter.delete('/product/:productId', async (req, res) => {
+productRouter.delete('/:productId', checkAuth_1.default, async (req, res) => {
     try {
         const productID = req.params.productId;
         const deletedProduct = await product_1.default.findByIdAndDelete(productID);

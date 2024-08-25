@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const order_1 = __importDefault(require("../models/order"));
 const apiFeatures_1 = require("../utils/apiFeatures");
+const checkAuth_1 = __importDefault(require("../middleware/checkAuth"));
 const orderRouter = express_1.default.Router();
 orderRouter.get('/', async (req, res) => {
     const features = new apiFeatures_1.apiFeatures(order_1.default.find(), req.query)
@@ -33,7 +34,7 @@ orderRouter.get('/:orderId', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-orderRouter.post('/create', async (req, res) => {
+orderRouter.post('/create', checkAuth_1.default, async (req, res) => {
     try {
         const newOrder = new order_1.default({
             UserID: req.body.UserID,
@@ -48,7 +49,7 @@ orderRouter.post('/create', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-orderRouter.patch('/:orderId', async (req, res) => {
+orderRouter.patch('/:orderId', checkAuth_1.default, async (req, res) => {
     try {
         const orderId = req.params.orderId;
         const updateData = req.body;
@@ -61,7 +62,7 @@ orderRouter.patch('/:orderId', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-orderRouter.delete('/:orderId', async (req, res) => {
+orderRouter.delete('/:orderId', checkAuth_1.default, async (req, res) => {
     try {
         const orderId = req.params.orderId;
         const deleteOrder = await order_1.default.findByIdAndDelete(orderId);
