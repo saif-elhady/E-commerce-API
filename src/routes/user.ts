@@ -6,10 +6,23 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user';
 require('dotenv').config;
 
-const router = express.Router();
+const userRouter = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET ?? 'default_secret';
 
-router.post('/signup', check('Email', 'Email is not valid').isEmail(),
+userRouter.get('/:userId', async(req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'user not found' });
+        }
+        res.status(201).json(user);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+})
+
+userRouter.post('/signup', check('Email', 'Email is not valid').isEmail(),
     check('Password')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
         .matches(/\d/).withMessage('Password must contain at least one number')
@@ -56,7 +69,7 @@ router.post('/signup', check('Email', 'Email is not valid').isEmail(),
     }
     })
 
-router.post('/login', async (req, res) => {
+userRouter.post('/login', async (req, res) => {
     const { Email, Password } = req.body;
     if (!Email || !Password) {
         return res.status(400).json({ message: 'Pleas Provide all required fields' });
@@ -81,7 +94,7 @@ router.post('/login', async (req, res) => {
     }
 })
 
-router.delete('/:userId', async (req, res) => {
+userRouter.delete('/:userId', async (req, res) => {
     try {
         await User.findByIdAndDelete(req.params.userId);
         res.status(201).json({ message: 'user deleted successfully' });
@@ -91,4 +104,4 @@ router.delete('/:userId', async (req, res) => {
     }
 })
 
-export default router;
+export default userRouter;

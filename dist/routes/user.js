@@ -9,9 +9,21 @@ const express_validator_1 = require("express-validator");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_1 = __importDefault(require("../models/user"));
 require('dotenv').config;
-const router = express_1.default.Router();
+const userRouter = express_1.default.Router();
 const JWT_SECRET = process.env.JWT_SECRET ?? 'default_secret';
-router.post('/signup', (0, express_validator_1.check)('Email', 'Email is not valid').isEmail(), (0, express_validator_1.check)('Password')
+userRouter.get('/:userId', async (req, res) => {
+    try {
+        const user = await user_1.default.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'user not found' });
+        }
+        res.status(201).json(user);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+userRouter.post('/signup', (0, express_validator_1.check)('Email', 'Email is not valid').isEmail(), (0, express_validator_1.check)('Password')
     .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
     .matches(/\d/).withMessage('Password must contain at least one number')
     .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must be at least 8 characters long and contain at least one number and one special character'), (0, express_validator_1.check)('Name', 'Name is required').exists(), async (req, res) => {
@@ -48,7 +60,7 @@ router.post('/signup', (0, express_validator_1.check)('Email', 'Email is not val
         res.status(500).json({ message: 'Server error', error });
     }
 });
-router.post('/login', async (req, res) => {
+userRouter.post('/login', async (req, res) => {
     const { Email, Password } = req.body;
     if (!Email || !Password) {
         return res.status(400).json({ message: 'Pleas Provide all required fields' });
@@ -69,7 +81,7 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-router.delete('/:userId', async (req, res) => {
+userRouter.delete('/:userId', async (req, res) => {
     try {
         await user_1.default.findByIdAndDelete(req.params.userId);
         res.status(201).json({ message: 'user deleted successfully' });
@@ -78,4 +90,4 @@ router.delete('/:userId', async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 });
-exports.default = router;
+exports.default = userRouter;
