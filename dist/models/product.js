@@ -46,9 +46,11 @@ const productSchema = new mongoose_1.Schema({
         ref: "Category",
         required: true
     },
-    images: {
-        type: [String],
-    }
+    images: [{
+            filename: { type: String, required: true },
+            contentType: { type: String, required: true },
+            imageBase64: { type: String, required: true }
+        }]
 });
 const Product = mongoose_1.default.model('pouduct', productSchema);
 exports.default = Product;

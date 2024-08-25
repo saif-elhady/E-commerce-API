@@ -1,4 +1,17 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
+
+export interface IProduct extends Document{
+    Name: string;
+    Description: string;
+    Price: number;
+    stockQuantity: number;
+    CategoryID: mongoose.Schema.Types.ObjectId;
+    images: {
+        filename: string,
+        contentType: string,
+        imageBase64: string
+    }[];
+}
 const productSchema = new Schema({
     Name: {
         type: String,
@@ -21,9 +34,11 @@ const productSchema = new Schema({
         ref: "Category",
         required: true
     },
-    images: {
-        type: [String],
-    }
+    images: [{
+        filename: { type: String, required: true },
+        contentType: { type: String, required: true },
+        imageBase64: { type: String, required: true }
+    }]
 })
 
 const Product = mongoose.model('pouduct', productSchema);

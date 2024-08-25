@@ -1,4 +1,11 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
+
+export interface IOrder extends Document {
+    UserID: mongoose.Schema.Types.ObjectId;
+    ProductIDs: mongoose.Schema.Types.ObjectId[];
+    orderDate: Date;
+    TotalPrice: number;
+}
 
 const orderSchema = new Schema({
     UserID: {
