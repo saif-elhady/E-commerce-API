@@ -1,8 +1,10 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import router from './routes/user';
 import categoryRouter from './routes/category';
+import productRouter from './routes/product';
+import orderRouter from './routes/order';
+import userRouter from './routes/user';
 require('dotenv').config();
 
 const app = express();
@@ -20,6 +22,7 @@ mongoose.connect(dbURI)
     .catch((err: Error) => {
         console.log(err);
 })
-app.use('/api', categoryRouter); // Use the category router with a base path of /api/categories
-
-app.use('/', router);
+app.use('/api/category', categoryRouter);
+app.use('/api/product', productRouter);
+app.use('/api/order', orderRouter);
+app.use('/api', userRouter);
